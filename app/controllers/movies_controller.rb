@@ -11,8 +11,26 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.order(params[:sort])
-    @sort = params[:var]
+    @all_ratings = Movie.uniq.pluck("rating")
+
+    if params[:ratings]
+      @checked = params[:ratings].keys
+    else
+      @checked = @all_ratings
+    end
+
+    if params[:sort]
+      @movies = Movie.order(params[:sort])
+      @sort = params[:sort]
+    elsif params[:ratings]
+      @movies = Movie.where(:rating => @checked)
+    else
+      @movies = Movie.all
+    end
+
+    @checked.each do |rating|
+      params[rating] = true
+    end
   end
 
   def new
