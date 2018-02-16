@@ -13,17 +13,22 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.uniq.pluck("rating")
 
+    #if 'refresh' button pressed, get checked ratings
+    #else get all ratings
     if params[:ratings]
       @checked = params[:ratings].keys
     else
       @checked = @all_ratings
     end
 
+    #if getting movies by sorting movie_title or release_date
     if params[:sort]
       @movies = Movie.order(params[:sort])
       @sort = params[:sort]
+    #else if get the movies by rating rilter
     elsif params[:ratings]
       @movies = Movie.where(:rating => @checked)
+    #else just get all movies
     else
       @movies = Movie.all
     end
